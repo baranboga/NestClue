@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Node {
+  id            Int             @id @default(autoincrement())
+  title         String
+  description   String?
+  isEnd         Boolean         @default(false)
+  choices       Choice[]        @relation("NodeChoices")
+  nextChoices   Choice[]        @relation("NextNodeChoices")
+  playerProgress PlayerProgress[] // Bu ilişkiyi ekleyin
+
+  @@map("nodes") // Veritabanındaki tablo adı 'nodes'
+}
+
+model Choice {
+  id          Int       @id @default(autoincrement())
+  choiceText  String
+  node        Node      @relation("NodeChoices", fields: [nodeId], references: [id])
+  nodeId      Int
+  nextNode    Node?     @relation("NextNodeChoices", fields: [nextNodeId], references: [id])
+  nextNodeId  Int?
+
+  @@map("choices") // Veritabanındaki tablo adı 'choices'
+}
+
+model PlayerProgress {
+  id            Int       @id @default(autoincrement())
+  playerId      Int
+  currentNode   Node      @relation(fields: [currentNodeId], references: [id])
+  currentNodeId Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("player_progress") // Veritabanındaki tablo adı 'player_progress'
+}
