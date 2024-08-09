@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { NodeService } from './node.service';
 import { CreateNodeDto } from './dto/create-node.dto';
+import { UpdateNodeDto } from './dto/update-node.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('nodes')
@@ -21,5 +22,16 @@ export class NodeController {
   @Post()
   createNode(@Body() createNodeDto: CreateNodeDto) {
     return this.nodeService.createNode(createNodeDto);
+  }
+
+  @Put(':id')
+  updateNode(@Param('id') id: number, @Body() updateNodeDto: UpdateNodeDto) {
+    return this.nodeService.updateNode(id, updateNodeDto);
+  }
+
+
+  @Delete(':id')
+  deleteNode(@Param('id') id: number) {
+    return this.nodeService.deleteNode(id);
   }
 }
